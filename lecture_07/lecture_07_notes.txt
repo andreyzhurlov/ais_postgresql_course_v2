@@ -1,0 +1,60 @@
+/*
+Задание 1: Использовать UNION
+Описание:
+Вывести список всех клиентов, которые:
+либо из города "Moskva",
+либо сделали хотя бы один заказ на товар "smartphone".
+Каждого клиента показать только один раз (т.е. без повторов, используем UNION).
+*/
+select  c.id as client_id,
+		c.first_name ,
+		c.last_name ,
+		c.email ,
+		c.city
+from dev.clients c
+where c.city = 'Moskva'
+union
+select 	o.client_id ,
+		c.first_name ,
+		c.last_name ,
+		c.email ,
+		c.city
+from dev.orders o
+join dev.clients c
+ on o.client_id = c.id
+where o.item_name = 'smartphone';
+
+
+/*
+Задание 3: Использовать UNION ALL, CTE и JOIN
+Описание:
+Составить список заказов, в котором:
+сначала идут все заказы на товар laptop,
+затем — все заказы на товар tablet.
+Поскольку один клиент мог заказывать и то, и другое — допустимы повторы (поэтому применяйте UNION ALL).
+Затем, финально - обогатите набор данных информацией о клиенте (имя, фамилия, возраст и город)
+*/
+with cte_orders as (
+	select  o.client_id ,
+			o.order_date ,
+			o.item_name
+	from dev.orders o
+	where o.item_name = 'laptop'
+	union all
+	select  o.client_id ,
+			o.order_date ,
+			o.item_name
+	from dev.orders o
+	where o.item_name = 'tablet'
+)
+select  o.client_id ,
+		c.first_name ,
+		c.last_name ,
+		c.email ,
+		c.city ,
+		o.order_date ,
+		o.item_name
+ from cte_orders o
+ join dev.clients c
+   on o.client_id = c.id
+
