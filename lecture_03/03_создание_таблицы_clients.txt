@@ -1,14 +1,14 @@
-CREATE SCHEMA IF NOT EXISTS dev;
+CREATE SCHEMA IF NOT EXISTS store;
 
 ------------------------------------------------
 ------------------------------------------------
 
-drop table if exists dev.clients;
+drop table if exists store.clients;
 
 ------------------------------------------------
 ------------------------------------------------
 
-CREATE TABLE If NOT EXISTS dev.clients (
+CREATE TABLE If NOT EXISTS store.clients (
     row_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     id INT PRIMARY KEY,
     first_name VARCHAR(50),
@@ -22,7 +22,7 @@ CREATE TABLE If NOT EXISTS dev.clients (
 ------------------------------------------------
 ------------------------------------------------
 
-INSERT INTO dev.clients (id, first_name, last_name, birth_date, email, phone, city) 
+INSERT INTO store.clients (id, first_name, last_name, birth_date, email, phone, city) 
 VALUES
 (1, 'Ivan', 'Ivanov', '1990-05-12', 'ivan.ivanov@example.com', '+79261234567', 'Moskva'),
 (2, 'Petr', 'Petrov', '1985-03-08', 'petr.petrov@example.ru', '+79267654321', 'Kazan'),

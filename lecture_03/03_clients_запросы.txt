@@ -1,87 +1,87 @@
 -- 1. Получить всех клиентов из города Moskva
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE city = 'Moskva';
 
 -- 2. Найти клиентов, у которых имя Ivan и город Kazan
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE first_name = 'Ivan' AND city = 'Kazan';
 
 -- 3. Найти клиентов из Voronezh или Samara
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE city = 'Voronezh' OR city = 'Samara';
 
 -- 4. Выбрать клиентов, родившихся после 1990 года
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE birth_date > DATE '1990-01-01';
 
 -- 5. Получить клиентов, у которых email заканчивается на '@example.com'
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE email LIKE '%@example.ru';
 
 -- 6. Найти клиентов, у которых имя начинается с буквы 'A'
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE first_name LIKE 'A%';
 
 -- 7. Найти клиентов, у которых фамилия не начинается на 'S'
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE last_name NOT LIKE 'S%';
 
 -- 8. Найти клиентов, у которых имя длиной 5 символов
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE LENGTH(first_name) = 5;
 
 -- 9. Получить клиентов, город которых в списке
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE city IN ('Moskva', 'Kazan');
 
 -- 10. Получить клиентов, не из указанных городов
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE city NOT IN ('Voronezh', 'Samara');
 
 -- 11. Найти клиентов, у которых в имени есть подстрока 'na'
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE first_name LIKE '%na%';
 
 -- 12. Получить клиентов, родившихся между 1980 и 1990
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE birth_date BETWEEN DATE '1980-01-01' AND DATE '1990-12-31';
 
 -- 13. Найти клиентов с неуказанным телефоном
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE phone IS NULL OR phone = '';
 
 -- 14. Выбрать клиентов, у которых email не содержит слово 'test'
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE email NOT LIKE '%test%';
 
 -- 15. Получить список городов без повторений
-SELECT DISTINCT city FROM dev.clients;
+SELECT DISTINCT city FROM store.clients;
 
 -- 16. Найти клиентов, у которых фамилия заканчивается на 'ova'
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE last_name LIKE '%ova';
 
 -- 17. Вывести полное имя клиента (имя + фамилия) и email
 SELECT CONCAT(first_name, ' ', last_name) AS full_name, email
-FROM dev.clients;
+FROM store.clients;
 
 -- 18. Выбрать клиентов, у которых в имени есть 'e' или фамилия начинается на 'K'
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE first_name LIKE '%e%' OR last_name LIKE 'K%';
 
 -- 19. Вывести клиентов, у которых фамилия внтури содержит две буквы 'o' через одну любую букву
-SELECT * FROM dev.clients
+SELECT * FROM store.clients
 WHERE last_name LIKE '%o_o%';
 
 -- 20. Сортировка по дате рождения (от самых старших к младшим)
 SELECT id, first_name, last_name, birth_date
-FROM dev.clients
+FROM store.clients
 WHERE birth_date IS NOT NULL
 ORDER BY birth_date ASC;
 
 -- 21. Сортировка по городу (по алфавиту) и внутри каждого города по фамилии клиента
 SELECT id, first_name, last_name, city
-FROM dev.clients
+FROM store.clients
 ORDER BY city ASC, last_name ASC;
 
 --Возрастные группы
@@ -100,7 +100,7 @@ SELECT
         ELSE 'Pensioner'
     END AS age_group
 FROM
-    dev.clients;
+    store.clients;
 -----------------------------------------------------------------------
 -- Задачи
 -----------------------------------------------------------------------

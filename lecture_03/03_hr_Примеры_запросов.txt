@@ -220,7 +220,7 @@ from hr.  employees
 where  salary >
                (select salary
                 from hr.  employees
-                where  last_name = 'Fay');
+                where  last_name = 'Petrov');
 
 
 select last_name, job_id, salary
@@ -228,11 +228,11 @@ from hr.  employees
 where  job_id =  
                 (select job_id
                  from hr.  employees
-                 where  last_name = 'Lorentz')
+                 where  last_name = 'Soloviev')
 AND    salary >
                 (select salary
                  from hr.  employees
-                 where  last_name = 'Lorentz');
+                 where  last_name = 'Soloviev');
 				 
 				 
 select last_name, job_id
@@ -240,7 +240,7 @@ from hr.  employees
 where  job_id =
                 (select job_id
                  from hr.  employees
-                 where  last_name = 'Lorentz');
+                 where  last_name = 'Soloviev');
 				 
 				 
 
@@ -267,7 +267,7 @@ and job_id <> 6;
 select employee_id,salary,last_name from hr.employees M
 where exists
 (select employee_id from hr.employees W
- where (W.manager_id = M.employee_id) AND W.salary > 10000);
+ where (W.manager_id = M.employee_id) AND W.salary > 100000);
 
 
 select * from hr.jobs
