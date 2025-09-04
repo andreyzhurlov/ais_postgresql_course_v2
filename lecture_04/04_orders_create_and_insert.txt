@@ -1,14 +1,14 @@
 
-CREATE TABLE IF NOT EXISTS dev.orders (
+CREATE TABLE IF NOT EXISTS store.orders (
     order_id INT,
     order_date DATE,
     order_qty INT,
     order_ammount DECIMAL(10,2),
     item_name VARCHAR(100),
-    client_id INT REFERENCES dev.clients(id)
+    client_id INT REFERENCES store.clients(id)
 );
 
-INSERT INTO dev.orders (order_id, order_date, order_qty, order_ammount, item_name, client_id) VALUES
+INSERT INTO store.orders (order_id, order_date, order_qty, order_ammount, item_name, client_id) VALUES
 (1, '2024-07-13', 2, 524.1, 'coffee maker', 4),
 (1, '2024-07-13', 5, 662.96, 'tablet', 4),
 (1, '2024-07-13', 1, 78.31, 'humidifier', 4),
