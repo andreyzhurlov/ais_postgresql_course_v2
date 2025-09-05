@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS hr.dependents (
 
 
 -- Создание таблицы job_history
-CREATE TABLE IF NOT EXISTS TABLE hr.job_history (
+CREATE TABLE IF NOT EXISTS hr.job_history (
     employee_id INT,
     hire_date DATE,
     job_id INT
