@@ -61,3 +61,12 @@ CREATE TABLE IF NOT EXISTS hr.dependents (
     employee_id INTEGER NOT NULL,
     FOREIGN KEY (employee_id) REFERENCES hr.employees (employee_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+
+
+-- Создание таблицы job_history
+CREATE TABLE IF NOT EXISTS TABLE hr.job_history (
+    employee_id INT,
+    hire_date DATE,
+    job_id INT
+);
