@@ -1,0 +1,72 @@
+select
+		(select t2.city from store.clients t2 where t2.id = t1.client_id) as city
+		,'dataset_1' as c1
+		,t1.*
+  from store.orders t1
+ 
+------------------------------------------
+select t1.employee_id,
+		t1.last_name,
+		t2.department_name
+from (
+		select emp.employee_id,
+			   emp.last_name,
+			   emp.department_id
+		from hr.employees emp
+		where  emp.employee_id not in
+		                           (select manager_id
+		                            from hr.employees mgr
+		                           where mgr.manager_id is not null)
+	  ) t1
+ left join hr.departments t2
+ on t1.department_id = t2.department_id;
+
+
+
+
+-- Задание 3: Показать все заказы, сделанные в те же дни, когда заказывал клиент с id = 5
+select o1.*
+ from store.orders o1
+where o1.order_date in (select distinct o2.order_date
+						 from store.orders o2 where o2.client_id = 5)
+and o1.client_id <> 5	
+
+
+				  
+-- Задание 4: Найти имена клиентов, у которых заказ был сделан позже всех заказов клиента с id = 10					  
+						  
+select distinct
+	   c1.id,
+	   c1.first_name || ' ' || c1.last_name as full_name,
+	   o1.order_date
+ from store.orders o1
+ join store.clients c1
+   on o1.client_id  = c1.id
+where o1.order_date > all (select distinct o2.order_date
+						 from store.orders o2 where o2.client_id = 10)
+  and o1.client_id <> 10
+order by o1.order_date;
+
+
+
+select employee_id,
+      e.job_id,
+      j.job_title as "Job Name",
+      hire_date,
+      e.salary
+from   hr.employees e
+join hr.jobs j
+ on e.job_id = j.job_id
+union
+select employee_id,
+      h.job_id,
+      j.job_title,
+      hire_date,
+      null as salary
+from   hr.job_history h
+join hr.jobs j
+ on h.job_id = j.job_id
+order by employee_id, hire_date desc;
+
+
+
