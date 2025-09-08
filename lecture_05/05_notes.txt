@@ -69,4 +69,82 @@ join hr.jobs j
 order by employee_id, hire_date desc;
 
 
+-- Задание 1. Вывести клиентов, у которых есть хотя бы один заказ с товаром laptop,
+-- и отметить их как VIP,
+-- остальных как "обычный" (ordinary)
+with cte_vip_clients as (
+	select distinct
+			'vip' as status,
+			c.id,
+			c.first_name,
+			c.last_name,
+			c.email
+	  from store.orders o
+	  join store.clients c
+	    on o.client_id = c.id
+	   and o.item_name in ('laptop')
+)
+,cte_all_clients as (
+select 	t1.status,
+	   	t1.id as client_id,
+  		concat(t1.first_name, ' ', t1.last_name) as full_name,
+		t1.email
+ from cte_vip_clients t1
+union all
+select 	'ordinary' as status,
+	   	t2.id as client_id,
+  		concat(t2.first_name, ' ', t2.last_name),
+		t2.email
+ from store.clients t2
+ left join cte_vip_clients t3
+   on t2.id = t3.id
+where t3.id is null
+)
+select 	status,
+	   	client_id,
+  		full_name,
+		email
+ from cte_all_clients
+where email is not null
+order by full_name desc
+
+
+---------------------------------------------------------------------------------
+-- CTE
+---------------------------------------------------------------------------------
+-- 1. Вывести список всех сотрудников, работающих в департаменте "IT", с указанием города
+-- Сотрудники из департамента IT и их города
+WITH it_department AS (
+   SELECT department_id
+   FROM hr.departments
+   WHERE department_name = 'IT'
+)
+SELECT e.first_name, e.last_name, l.city
+FROM hr.employees e
+JOIN hr.departments d
+ ON e.department_id = d.department_id
+and e.department_id IN (SELECT department_id FROM it_department)	
+JOIN hr.locations l
+ ON d.location_id = l.location_id;
+
+
+-- 3. Найти сотрудников, которые работают в одной стране с департаментом "Marketing"
+-- Сотрудники, работающие в той же стране, где департамент "Marketing"
+WITH marketing_locations AS (
+   SELECT l.location_id,
+   	   l.city
+   FROM hr.departments d
+   JOIN hr.locations l ON d.location_id = l.location_id
+   WHERE d.department_name = 'Marketing'
+)
+SELECT DISTINCT
+		e.first_name,
+		e.last_name,
+		d.department_name,
+		ml.city
+FROM hr.employees e
+JOIN hr.departments d
+ ON e.department_id = d.department_id
+JOIN marketing_locations ml
+ on ml.location_id = d.location_id;
 
