@@ -55,7 +55,9 @@ select o.item_name,
  group by o.client_id,
  		   full_name,
  		   c.city
- order by order_sum desc;	
+ order by order_sum desc;
+
+	
 --v2
  with cte_orders as (
 	select  o.client_id,
@@ -87,4 +89,76 @@ select  o.client_id,
    on o.client_id = c.id
 order by o.order_sum desc;
  			
+
+-- Задание 4: Общее количество и сумма заказов по каждому городу
+-- в Порядке убывания по сумме заказов
+
+with cte_orders as (
+	select  o.client_id,
+			o.order_id,
+			sum(o.order_ammount) as order_ammount
+	  from store.orders o
+	  group by  o.client_id,
+	  			o.order_id
+)
+select  c.city,
+ 		count(o.order_id) as order_qty,
+		sum(o.order_ammount) as order_sum
+ from cte_orders o
+ join store.clients c
+   on o.client_id = c.id
+group by c.city
+order by order_sum desc;
+
+
+-- Задание 5: Общее количество, сумма заказов и среднее значение заказа, по возрастным группам
+-- в Порядке убывания по сумме заказов
+with cte_orders as (
+	select  o.client_id,
+			o.order_id,
+			sum(o.order_ammount) as order_ammount
+	  from store.orders o
+	  group by  o.client_id,
+	  			o.order_id
+), cte_client_orders as (
+	select  extract(year from age(c.birth_date)) as client_age,
+	  		o.order_id,
+			o.order_ammount
+	  from cte_orders o
+	  join store.clients c
+	    on o.client_id = c.id
+), cte_client_orders_age_group as (
+	select  CASE
+		        WHEN client_age < 18 THEN 'menee 18'
+		        WHEN client_age BETWEEN 18 AND 24 THEN '18 - 24'
+		        WHEN client_age BETWEEN 25 AND 39 THEN '25 - 39'
+				WHEN client_age BETWEEN 40 AND 55 THEN '40 - 55'
+		        WHEN client_age BETWEEN 56 AND 70 THEN '56+'
+		        ELSE 'Ne izvestno'
+		    END AS age_group,
+	  		o.order_id,
+			o.order_ammount
+     from cte_client_orders o
+)
+select  age_group,
+		count(order_id) as order_qty,
+		sum(order_ammount) as order_sum
+ from cte_client_orders_age_group
+group by age_group
+order by order_sum desc;
+
+-----------------------------------------------------------------------------
+-- GROUP BY + HAVING + CTE
+-----------------------------------------------------------------------------
+
+-- Задание 2: Найти города, в которых более 3 клиентов, рождённых после 1990 года, совершали заказы.
+-- Вывести название города и количество таких клиентов.
+select c.city,
+	   count(c.id) as client_qty
+ from store.orders o
+ join store.clients c
+   on o.client_id  = c.id
+  and c.birth_date > '1990-12-31'
+group by c.city
+having count(c.id) > 3
 
