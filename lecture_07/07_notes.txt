@@ -1,0 +1,90 @@
+-- Задание 1: Общее количество и сумма заказов, среднее значение заказа,
+-- минимальная и максимальная дата заказа
+-- без группировок
+select  count(o.order_id),
+		sum(o.order_ammount),
+		avg(o.order_ammount),
+		min(o.order_date),
+		max(o.order_date)
+ from store.orders o;
+ --v2
+with cte_orders as (
+	select  o.order_id,
+			o.order_date,
+			sum(o.order_ammount) as order_ammount
+	  from store.orders o
+	  group by  o.order_id,
+				o.order_date
+)
+select  count(o.order_id),
+		sum(o.order_ammount),
+		avg(o.order_ammount),
+		min(o.order_date),
+		max(o.order_date)
+ from cte_orders o;
+-------------------------------------------------
+-- Задание 2: Общее количество и сумма заказов, среднее значение заказа,
+-- минимальная и максимальная дата заказа
+-- в Группировке по названию товара
+-- Сортировка по количеству (По Возрастанию) + по сумме заказов (по Убыванию)
+select o.item_name,
+		count(*) as item_qty,
+		sum(o.order_ammount) as item_sum,
+		avg(o.order_ammount) as item_avg,
+		min(o.order_date) as item_min,
+		max(o.order_date) as item_max
+ from store.orders o
+ group by o.item_name
+ order by  item_qty,
+ 			item_sum desc;
+ 		
+-- Задание 3: По каждому клиенту: Общее количество и сумма заказов,
+-- минимальная и максимальная дата заказа
+-- + Доп.информация с Фамилией и Именем клиента, а так же название города
+-- + Сортировка по Убыванию относительно суммы заказа
+  select o.client_id,
+ 		concat(c.first_name, ' ', c.last_name) as full_name,
+ 		c.city,
+		sum(o.order_qty) as order_qty,
+		sum(o.order_ammount) as order_sum,
+		min(o.order_date) as order_min,
+		max(o.order_date) as order_max
+ from store.orders o
+ join store.clients c
+   on o.client_id = c.id
+ group by o.client_id,
+ 		   full_name,
+ 		   c.city
+ order by order_sum desc;	
+--v2
+ with cte_orders as (
+	select  o.client_id,
+			o.order_id,
+			o.order_date,
+			sum(o.order_ammount) as order_ammount
+	  from store.orders o
+	  group by  o.client_id,
+	  			o.order_id,
+				o.order_date
+), cte_client_orders as (
+	select  o.client_id,
+			count(o.order_id) as order_qty,
+			sum(o.order_ammount) as order_sum,
+			min(o.order_date) as order_min,
+			max(o.order_date) as order_max
+	  from cte_orders o
+	  group by o.client_id
+)
+select  o.client_id,
+ 		concat(c.first_name, ' ', c.last_name) as full_name,
+ 		c.city,
+ 		o.order_qty,
+		o.order_sum,
+		o.order_min,
+		o.order_max
+ from cte_client_orders o
+ join store.clients c
+   on o.client_id = c.id
+order by o.order_sum desc;
+ 			
+
