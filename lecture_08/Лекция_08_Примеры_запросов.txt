@@ -1,71 +1,103 @@
 
-
 ---------------------------------------------------------------------------------
 -- VIEW
 ---------------------------------------------------------------------------------
-
-
-
 -- 49
-create view	hr.empvu80
- as select  employee_id, last_name, salary
-    from    employees
-    where   department_id = 80;
+create view	hr.emp_dep_8
+as select  employee_id, last_name, salary
+   from    hr.employees
+   where   department_id = 8;
 	
-SELECT * FROM hr.empvu80
--- 50
-create view	salvu50
- as select  employee_id ID_NUMBER, last_name as name,
-            salary*12 ANN_SALARY
-    from    employees
-    where   department_id = 50;
+SELECT * FROM hr.emp_dep_8
 
-SELECT * FROM hr.salvu50
--- 51
-select * from   salvu50;
+-- 50
+create view	hr.year_salary_dep_5
+as select  employee_id ID_NUMBER, last_name as name,
+           salary*12 ANN_SALARY
+   from    hr.employees
+   where   department_id = 5;
+
+
+SELECT * FROM hr.year_salary_dep_5;
 
 -- 52
-drop view empvu80;
+drop view  hr.emp_dep_8;
 
-create or replace view empvu80(
-	id_number, 
-    name, 
-	sal, 
+--
+create or replace view hr.emp_dep_8(
+	id_number,
+   full_name,
+	salary,
 	department_id
 )
-as select   employee_id, 
-			first_name || ' ' || last_name, 
-			salary, 
+as select   employee_id,
+			first_name || ' ' || last_name,
+			salary,
 			department_id
-     from  employees
-    where  department_id = 80;
+    from  hr.employees
+   where  department_id = 8;
+  --
 
 
-select * from  employees where employee_id = 190;
+SELECT * FROM hr.emp_dep_8;
 
-select * from  employees where employee_id = 150;
 
-update employees
-  set salary = 10000
-where employee_id = 150;
+select * from  hr.employees where employee_id = 179;
+
+
+update hr.employees
+ set salary = 100000
+where employee_id = 179;
+
 
 -- 53
 CREATE OR REPLACE VIEW hr.dept_sum_vu(
-	name, 
-	minsal, 
-	maxsal, 
+	name,
+	minsal,
+	maxsal,
 	avgsal
 )
-as select   d.department_name, 
-			MIN(e.salary), 
-            MAX(e.salary),
-			AVG(e.salary)
-	from employees e 
-	join departments d
-      on (e.department_id = d.department_id)
-   group by d.department_name;
-   
- SELECT * FROM hr.dept_sum_vu
+as select   d.department_name,
+			MIN(e.salary),
+           MAX(e.salary),
+			round(AVG(e.salary), 0)
+	from hr.employees e
+	join hr.departments d
+     on (e.department_id = d.department_id)
+  group by d.department_name;
+ 
+SELECT * FROM hr.dept_sum_vu;
+
+----------------------------------------------------------
+----------------------------------------------------------
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS hr.mv_emp_dep_8(
+	id_number,
+   full_name,
+	salary,
+	department_id
+)
+as select   employee_id,
+			first_name || ' ' || last_name,
+			salary,
+			department_id
+    from  hr.employees
+   where  department_id = 8;
+  --
+
+SELECT * FROM hr.mv_emp_dep_8;
+
+select * from  hr.employees where employee_id = 178;
+
+
+update hr.employees
+ set salary = 80000
+where employee_id = 178;
+
+--
+REFRESH MATERIALIZED view hr.mv_emp_dep_8;
+
+
 
 
 
