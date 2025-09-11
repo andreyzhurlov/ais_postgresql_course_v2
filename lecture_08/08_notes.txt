@@ -194,3 +194,134 @@ SELECT
 FROM
    store.clients;
 
+
+
+
+------------------------------------------------------
+/*
+Задача:
+Для каждого клиента и заказа вывести:
+текущую сумму заказа,
+сумму предыдущего заказа (с помощью LAG()),
+сумму следующего заказа (с помощью LEAD()),
+упорядочив по дате заказа.
+*/
+SELECT
+   client_id,
+   order_date,
+   item_name,
+   order_ammount,
+   LAG(order_ammount) OVER (
+       PARTITION BY client_id
+       ORDER BY order_date
+   ) AS prev_order_amount,
+   LEAD(order_ammount) OVER (
+       PARTITION BY client_id
+       ORDER BY order_date
+   ) AS next_order_amount
+FROM store.orders
+ORDER BY client_id, order_date;
+----------------------------------------------------
+SELECT
+   client_id,
+   order_date,
+   item_name,
+   order_ammount,
+   LAG(order_ammount, 2) OVER (
+       PARTITION BY client_id
+       ORDER BY order_date
+   ) AS prev_order_amount,
+   LEAD(order_ammount, 2) OVER (
+       PARTITION BY client_id
+       ORDER BY order_date
+   ) AS next_order_amount
+FROM store.orders
+ORDER BY client_id, order_date;
+----------------------------------------------------
+SELECT
+   client_id,
+   order_date,
+   item_name,
+   order_ammount,
+   coalesce(LAG(order_ammount, 2) OVER (
+       PARTITION BY client_id
+       ORDER BY order_date
+   ),0) AS prev_order_amount,
+   LEAD(order_ammount, 2) OVER (
+       PARTITION BY client_id
+       ORDER BY order_date
+   ) AS next_order_amount
+FROM store.orders
+ORDER BY client_id, order_date;
+--------------------------------------------
+SELECT
+   client_id,
+   order_date,
+   item_name,
+   order_ammount,
+   LAG(order_ammount, 2, 0) OVER (
+       PARTITION BY client_id
+       ORDER BY order_date
+   ) AS prev_order_amount,
+   LEAD(order_ammount, 2, 0) OVER (
+       PARTITION BY client_id
+       ORDER BY order_date
+   ) AS next_order_amount
+FROM store.orders
+ORDER BY client_id, order_date;
+--------------------------------------------
+SELECT
+   client_id,
+   order_date,
+   item_name,
+   order_ammount,
+   LAG(order_ammount, 2, order_ammount) OVER (
+       PARTITION BY client_id
+       ORDER BY order_date
+   ) AS prev_order_amount,
+   LEAD(order_ammount, 2, order_ammount) OVER (
+       PARTITION BY client_id
+       ORDER BY order_date
+   ) AS next_order_amount
+FROM store.orders
+ORDER BY client_id, order_date;
+--------------------------------------------------------------------------------
+-- ROW_NUMBER() — Найти самого раннего нанятого сотрудника в каждом департаменте
+SELECT *
+FROM (
+   SELECT
+       employee_id,
+       first_name,
+       last_name,
+       department_id,
+       hire_date,
+       ROW_NUMBER() OVER (PARTITION BY department_id ORDER BY hire_date) AS rn
+   FROM hr.employees
+) t
+WHERE rn = 1;
+----------------------
+SELECT *
+FROM (
+   SELECT
+       employee_id,
+       first_name,
+       last_name,
+       department_id,
+       hire_date,
+       DENSE_RANK() OVER (PARTITION BY department_id ORDER BY hire_date) AS rn
+   FROM hr.employees
+) t
+WHERE rn = 1;
+--------------------------------------------------------------------------------
+-- RANK() — Ранжировать сотрудников по зарплате внутри департамента
+-- Задача: понять, кто является самым высокооплачиваемым сотрудником в своём отделе,
+-- с учётом возможных одинаковых зарплат.
+SELECT
+   employee_id,
+   first_name,
+   last_name,
+   department_id,
+   salary,
+   DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) AS salary_rank
+FROM hr.employees;
+
